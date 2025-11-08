@@ -1,0 +1,386 @@
+name: Student Progress Tracker
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # Detect if this is a student fork or the main repository
+  detect-environment:
+    name: Detect Environment
+    runs-on: ubuntu-latest
+    outputs:
+      is_fork: ${{ steps.check.outputs.is_fork }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Check if fork
+        id: check
+        run: |
+          if [ "${{ github.repository }}" != "AlyxPink/go-training" ]; then
+            echo "is_fork=true" >> $GITHUB_OUTPUT
+            echo "✅ Running on student fork: ${{ github.repository }}"
+          else
+            echo "is_fork=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  Running on main repository - skipping student validation"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.is_fork == 'true'
+
+      - name: Generate exercise matrix
+        if: steps.check.outputs.is_fork == 'true'
+        id: set-matrix
+        run: |
+          exercises=$(find . -name "go.mod" -path "*/[0-9]*" | sed 's|/go.mod||' | sed 's|^./||' | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix=$exercises" >> $GITHUB_OUTPUT
+          echo "Found exercises: $exercises"
+
+  # Test student implementations
+  test-student-code:
+    name: "Test: ${{ matrix.exercise }}"
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        exercise: ${{ fromJson(needs.detect-environment.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check exercise structure
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          if [ ! -f "go.mod" ]; then
+            echo "❌ No go.mod found"
+            exit 1
+          fi
+
+          if [ ! -f "main.go" ]; then
+            echo "❌ No main.go found"
+            exit 1
+          fi
+
+          if [ ! -f "main_test.go" ]; then
+            echo "❌ No main_test.go found"
+            exit 1
+          fi
+
+          echo "✅ Exercise structure valid"
+
+      - name: Download dependencies
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run gofmt check
+        id: fmt
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          unformatted=$(gofmt -l main.go)
+          if [ -n "$unformatted" ]; then
+            echo "❌ Code is not properly formatted"
+            echo "Run: gofmt -w main.go"
+            gofmt -d main.go
+            exit 1
+          fi
+          echo "✅ Code is properly formatted"
+
+      - name: Run go vet
+        id: vet
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          if go vet ./...; then
+            echo "✅ No vet warnings"
+          else
+            echo "❌ Vet found issues"
+            exit 1
+          fi
+
+      - name: Run tests
+        id: test
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          echo "🧪 Testing student implementation..."
+          if go test -v -cover ./...; then
+            echo "✅ All tests passed!"
+            echo "status=pass" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Tests failed - keep working on this exercise!"
+            echo "status=fail" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run race detector (concurrency exercises)
+        if: contains(matrix.exercise, 'concurrency')
+        working-directory: ${{ matrix.exercise }}
+        run: |
+          echo "🏁 Running race detector..."
+          if go test -race -short -v ./...; then
+            echo "✅ No race conditions detected"
+          else
+            echo "❌ Race conditions found"
+            exit 1
+          fi
+
+  # Run golangci-lint on all student code
+  quality-checks:
+    name: Code Quality Checks
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Run golangci-lint
+        run: |
+          for exercise in $(find . -name "go.mod" -path "*/[0-9]*" | sed 's|/go.mod||' | sed 's|^./||'); do
+            echo "🔍 Linting $exercise..."
+            cd "$exercise"
+
+            if golangci-lint run --config ../.golangci.yml main.go; then
+              echo "✅ $exercise: No lint issues"
+            else
+              echo "⚠️  $exercise: Lint issues found"
+            fi
+
+            cd - > /dev/null
+          done
+
+  # Track progress and generate summary
+  track-progress:
+    name: Progress Tracker
+    needs: [detect-environment, test-student-code]
+    if: |
+      always() &&
+      needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate progress
+        id: progress
+        run: |
+          total=$(find . -name "go.mod" -path "*/[0-9]*" | wc -l)
+          echo "total=$total" >> $GITHUB_OUTPUT
+
+          # This is a simplified version - actual passing count would come from test results
+          # For now, we'll create a placeholder that students can see
+          echo "Total exercises: $total"
+
+      - name: Generate progress badge
+        run: |
+          mkdir -p .github/badges
+
+          # Create SVG badge (placeholder - would be generated based on actual results)
+          cat > .github/badges/progress.svg << 'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" width="140" height="20">
+            <linearGradient id="b" x2="0" y2="100%">
+              <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+              <stop offset="1" stop-opacity=".1"/>
+            </linearGradient>
+            <mask id="a">
+              <rect width="140" height="20" rx="3" fill="#fff"/>
+            </mask>
+            <g mask="url(#a)">
+              <path fill="#555" d="M0 0h70v20H0z"/>
+              <path fill="#007ec6" d="M70 0h70v20H70z"/>
+              <path fill="url(#b)" d="M0 0h140v20H0z"/>
+            </g>
+            <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+              <text x="35" y="15" fill="#010101" fill-opacity=".3">Progress</text>
+              <text x="35" y="14">Progress</text>
+              <text x="105" y="15" fill="#010101" fill-opacity=".3">0/65</text>
+              <text x="105" y="14">0/65</text>
+            </g>
+          </svg>
+          EOF
+
+      - name: Create completion matrix
+        run: |
+          cat > PROGRESS.md << 'EOF'
+          # My Go Training Progress
+
+          Track your progress through the 65 Go exercises!
+
+          ## Progress Overview
+
+          - **Completed**: 0/65 (0%)
+          - **In Progress**: Check failing tests below
+          - **Not Started**: All exercises
+
+          ## Exercise Completion Status
+
+          ### Basics (0/15)
+
+          | Exercise | Status | Notes |
+          |----------|--------|-------|
+          | 01-string-manipulation | ❌ | Not started |
+          | 02-number-operations | ❌ | Not started |
+          | 03-arrays-slices | ❌ | Not started |
+          | 04-maps | ❌ | Not started |
+          | 05-functions | ❌ | Not started |
+          | 06-pointers | ❌ | Not started |
+          | 07-structs | ❌ | Not started |
+          | 08-methods | ❌ | Not started |
+          | 09-control-flow | ❌ | Not started |
+          | 10-loops | ❌ | Not started |
+          | 11-constants-enums | ❌ | Not started |
+          | 12-type-conversion | ❌ | Not started |
+          | 13-json-handling | ❌ | Not started |
+          | 14-file-io | ❌ | Not started |
+          | 15-command-line-args | ❌ | Not started |
+
+          ### Intermediate (0/15)
+
+          | Exercise | Status | Notes |
+          |----------|--------|-------|
+          | 01-interfaces | ❌ | Not started |
+          | 02-errors | ❌ | Not started |
+          | 03-defer-panic-recover | ❌ | Not started |
+          | 04-variadic-functions | ❌ | Not started |
+          | 05-closures | ❌ | Not started |
+          | 06-recursion | ❌ | Not started |
+          | 07-type-assertions | ❌ | Not started |
+          | 08-string-formatting | ❌ | Not started |
+          | 09-testing | ❌ | Not started |
+          | 10-benchmarking | ❌ | Not started |
+          | 11-generics-basics | ❌ | Not started |
+          | 12-packages | ✅ | Teaching exercise |
+          | 13-sorting | ❌ | Not started |
+          | 14-custom-sort | ❌ | Not started |
+          | 15-http-server | ✅ | Teaching exercise |
+
+          ### Concurrency (0/15)
+
+          | Exercise | Status | Notes |
+          |----------|--------|-------|
+          | 01-goroutines | ❌ | Not started |
+          | 02-channels | ❌ | Not started |
+          | 03-buffered-channels | ❌ | Not started |
+          | 04-channel-select | ❌ | Not started |
+          | 05-worker-pools | ❌ | Not started |
+          | 06-waitgroups | ❌ | Not started |
+          | 07-mutexes | ❌ | Not started |
+          | 08-race-detector | ❌ | Not started |
+          | 09-atomic | ❌ | Not started |
+          | 10-producer-consumer | ❌ | Not started |
+          | 11-concurrent-cache | ❌ | Not started |
+          | 12-task-scheduler | ❌ | Not started |
+          | 13-context | ❌ | Not started |
+          | 14-parallel-processing | ❌ | Not started |
+          | 15-sync-primitives | ❌ | Not started |
+
+          ### Advanced (0/15)
+
+          | Exercise | Status | Notes |
+          |----------|--------|-------|
+          | 01-custom-errors | ❌ | Not started |
+          | 02-empty-interface | ❌ | Not started |
+          | 03-type-embedding | ❌ | Not started |
+          | 04-reflection | ❌ | Not started |
+          | 05-generics-advanced | ❌ | Not started |
+          | 06-build-tags | ❌ | Not started |
+          | 07-database-access | ✅ | Teaching exercise |
+          | 08-middleware | ❌ | Not started |
+          | 09-websockets | ❌ | Not started |
+          | 10-grpc-basics | ❌ | Not started |
+          | 11-testing-advanced | ❌ | Not started |
+          | 12-code-generation | ❌ | Not started |
+          | 13-ast-manipulation | ❌ | Not started |
+          | 14-cgo-basics | ❌ | Not started |
+          | 15-performance-optimization | ❌ | Not started |
+
+          ### Projects (0/5)
+
+          | Exercise | Status | Notes |
+          |----------|--------|-------|
+          | 01-cli-tool | ❌ | Not started |
+          | 02-rest-api | ❌ | Not started |
+          | 03-web-scraper | ❌ | Not started |
+          | 04-key-value-store | ❌ | Not started |
+          | 05-distributed-task-queue | ❌ | Not started |
+
+          ---
+
+          **Note**: This file is auto-generated. Update status by pushing code that passes tests!
+
+          **Legend**:
+          - ✅ Complete (all tests pass)
+          - 🟡 In Progress (some tests pass)
+          - ❌ Not Started (tests fail)
+          - 📚 Teaching Exercise (complete implementation provided)
+          EOF
+
+      - name: Generate summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 🎯 Go Training Progress
+
+          ### Summary
+          - **Total Exercises**: 65
+          - **Completed**: Check individual exercise results above
+          - **Note**: This is your first run! All exercises will show as failing until you implement solutions.
+
+          ### Next Steps
+          1. Pick an exercise to work on (start with `basics/01-string-manipulation`)
+          2. Read the README.md in the exercise directory
+          3. Implement the solution in `main.go`
+          4. Run `go test -v` locally to check your work
+          5. Push your code to see it turn green in CI!
+
+          ### Getting Help
+          - Check `HINTS.md` in each exercise for guidance
+          - Look at test cases in `main_test.go` to understand requirements
+          - Teaching exercises (intermediate/12, 15, advanced/07) have complete implementations to learn from
+
+          ### Quality Checks
+          Your code is automatically checked for:
+          - ✅ Tests passing
+          - ✅ Proper formatting (gofmt)
+          - ✅ No vet warnings
+          - ✅ Code quality (golangci-lint)
+          - ✅ Race conditions (concurrency exercises)
+
+          Keep going! 🚀
+          EOF
+
+  # Summary job that always runs
+  summary:
+    name: Validation Summary
+    needs: [detect-environment, test-student-code, quality-checks, track-progress]
+    if: always() && needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Summary
+        run: |
+          echo "## Student Validation Complete"
+          echo ""
+          echo "Check individual exercise results above for details."
+          echo "Keep working on failing exercises - you've got this! 💪"

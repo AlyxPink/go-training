@@ -1,11 +1,14 @@
 # Go Training Exercises
 
 [![Validate Exercises](https://github.com/AlyxPink/go-training/actions/workflows/validate-exercises.yml/badge.svg)](https://github.com/AlyxPink/go-training/actions/workflows/validate-exercises.yml)
+[![Student Progress](https://github.com/AlyxPink/go-training/actions/workflows/student-validation.yml/badge.svg)](https://github.com/AlyxPink/go-training/actions/workflows/student-validation.yml)
 [![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go)](https://go.dev/)
 [![Exercises](https://img.shields.io/badge/Exercises-65-success)](.)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A comprehensive collection of 65+ Go exercises designed to build strong coding skills for technical interviews and real-world development.
+A comprehensive collection of 65 Go exercises designed to build strong coding skills for technical interviews and real-world development.
+
+> **For Students**: See [STUDENT_GUIDE.md](STUDENT_GUIDE.md) for detailed instructions on using the automated testing and progress tracking features!
 
 ## Purpose
 
@@ -28,6 +31,16 @@ projects/        → Mini applications (5 capstone projects)
 ```
 
 ## How to Use
+
+### For Students (Forked Repository)
+
+1. **Fork this repository** to your GitHub account
+2. **Clone your fork** to your local machine
+3. **Read [STUDENT_GUIDE.md](STUDENT_GUIDE.md)** for complete setup instructions
+4. **Work on exercises** in `main.go` - GitHub Actions will automatically test your code!
+5. **Track your progress** - See which exercises you've completed in Actions tab
+
+### For Local Practice
 
 1. **Start with basics** if you're new to Go or need a refresher
 2. **Follow numbered order** within each topic for progressive learning

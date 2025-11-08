@@ -1,4 +1,7 @@
-name: Validate Exercises
+name: Validate Exercises (Maintainer)
+
+# This workflow validates repository health for maintainers only
+# Students should use the student-validation.yml workflow instead
 
 on:
   push:
@@ -10,6 +13,8 @@ on:
 jobs:
   generate-matrix:
     name: Generate Exercise Matrix
+    # Only run on main repository, not on forks
+    if: github.repository == 'AlyxPink/go-training'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -31,6 +36,7 @@ jobs:
 
   validate-starter-code:
     name: "Validate: ${{ matrix.exercise }}"
+    if: github.repository == 'AlyxPink/go-training'
     runs-on: ubuntu-latest
     needs: generate-matrix
     strategy:
@@ -93,6 +99,7 @@ jobs:
 
   validate-solutions:
     name: "Solution: ${{ matrix.exercise }}"
+    if: github.repository == 'AlyxPink/go-training'
     runs-on: ubuntu-latest
     needs: generate-matrix
     strategy:
@@ -177,7 +184,7 @@ jobs:
     name: Validation Summary
     runs-on: ubuntu-latest
     needs: [validate-starter-code, validate-solutions]
-    if: always()
+    if: always() && github.repository == 'AlyxPink/go-training'
     steps:
       - name: Generate summary
         run: |
