@@ -15,12 +15,14 @@ jobs:
       is_fork: ${{ steps.check.outputs.is_fork }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Check if fork
+      - name: Check if fork or study branch
         id: check
         run: |
-          if [ "${{ github.repository }}" != "AlyxPink/go-training" ]; then
+          # Enable validation on forks OR study/student/practice/learning/exercise branches
+          if [ "${{ github.repository }}" != "AlyxPink/go-training" ] || \
+             [[ "${{ github.ref }}" =~ ^refs/heads/(study|student|practice|learning|exercise)/ ]]; then
             echo "is_fork=true" >> $GITHUB_OUTPUT
-            echo "✅ Running on student fork: ${{ github.repository }}"
+            echo "✅ Running validation: ${{ github.repository }} on ${{ github.ref }}"
           else
             echo "is_fork=false" >> $GITHUB_OUTPUT
             echo "ℹ️  Running on main repository - skipping student validation"
