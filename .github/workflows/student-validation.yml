@@ -37,16 +37,31 @@ jobs:
           echo "matrix=$exercises" >> $GITHUB_OUTPUT
           echo "Found exercises: $exercises"
 
-  # Test student implementations
-  test-student-code:
-    name: "Test: ${{ matrix.exercise }}"
+  # Test Basics Module (01-basics)
+  test-basics:
+    name: "Basics: ${{ matrix.exercise }}"
     needs: detect-environment
     if: needs.detect-environment.outputs.is_fork == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        exercise: ${{ fromJson(needs.detect-environment.outputs.matrix) }}
+        exercise:
+          - 01-string-manipulation
+          - 02-number-operations
+          - 03-array-basics
+          - 04-slice-operations
+          - 05-map-fundamentals
+          - 06-struct-basics
+          - 07-pointer-mechanics
+          - 08-error-handling
+          - 09-variadic-functions
+          - 10-type-conversions
+          - 11-constants-enums
+          - 12-control-flow
+          - 13-defer-panic-recover
+          - 14-closures
+          - 15-recursion
 
     steps:
       - uses: actions/checkout@v4
@@ -57,34 +72,30 @@ jobs:
           go-version: '1.22'
 
       - name: Check exercise structure
-        working-directory: ${{ matrix.exercise }}
+        working-directory: 01-basics/${{ matrix.exercise }}
         run: |
           if [ ! -f "go.mod" ]; then
             echo "❌ No go.mod found"
             exit 1
           fi
-
           if [ ! -f "main.go" ]; then
             echo "❌ No main.go found"
             exit 1
           fi
-
           if [ ! -f "main_test.go" ]; then
             echo "❌ No main_test.go found"
             exit 1
           fi
-
           echo "✅ Exercise structure valid"
 
       - name: Download dependencies
-        working-directory: ${{ matrix.exercise }}
+        working-directory: 01-basics/${{ matrix.exercise }}
         run: |
           go mod download
           go mod verify
 
       - name: Run gofmt check
-        id: fmt
-        working-directory: ${{ matrix.exercise }}
+        working-directory: 01-basics/${{ matrix.exercise }}
         run: |
           unformatted=$(gofmt -l main.go)
           if [ -n "$unformatted" ]; then
@@ -96,8 +107,7 @@ jobs:
           echo "✅ Code is properly formatted"
 
       - name: Run go vet
-        id: vet
-        working-directory: ${{ matrix.exercise }}
+        working-directory: 01-basics/${{ matrix.exercise }}
         run: |
           if go vet ./...; then
             echo "✅ No vet warnings"
@@ -107,28 +117,374 @@ jobs:
           fi
 
       - name: Run tests
-        id: test
-        working-directory: ${{ matrix.exercise }}
+        working-directory: 01-basics/${{ matrix.exercise }}
         run: |
           echo "🧪 Testing student implementation..."
           if go test -v -cover ./...; then
             echo "✅ All tests passed!"
-            echo "status=pass" >> $GITHUB_OUTPUT
           else
             echo "❌ Tests failed - keep working on this exercise!"
-            echo "status=fail" >> $GITHUB_OUTPUT
             exit 1
           fi
 
-      - name: Run race detector (concurrency exercises)
-        if: contains(matrix.exercise, 'concurrency')
-        working-directory: ${{ matrix.exercise }}
+  # Test Intermediate Module (02-intermediate)
+  test-intermediate:
+    name: "Intermediate: ${{ matrix.exercise }}"
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        exercise:
+          - 01-interfaces
+          - 02-method-receivers
+          - 03-composition
+          - 04-json-marshaling
+          - 05-file-operations
+          - 06-csv-processing
+          - 07-flag-parsing
+          - 08-logging
+          - 09-regex-patterns
+          - 10-sorting
+          - 11-generics-basics
+          - 12-packages
+          - 13-testing-basics
+          - 14-http-client
+          - 15-http-server
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check exercise structure
+        working-directory: 02-intermediate/${{ matrix.exercise }}
+        run: |
+          if [ ! -f "go.mod" ]; then
+            echo "❌ No go.mod found"
+            exit 1
+          fi
+          if [ ! -f "main.go" ]; then
+            echo "❌ No main.go found"
+            exit 1
+          fi
+          if [ ! -f "main_test.go" ]; then
+            echo "❌ No main_test.go found"
+            exit 1
+          fi
+          echo "✅ Exercise structure valid"
+
+      - name: Download dependencies
+        working-directory: 02-intermediate/${{ matrix.exercise }}
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run gofmt check
+        working-directory: 02-intermediate/${{ matrix.exercise }}
+        run: |
+          unformatted=$(gofmt -l main.go)
+          if [ -n "$unformatted" ]; then
+            echo "❌ Code is not properly formatted"
+            echo "Run: gofmt -w main.go"
+            gofmt -d main.go
+            exit 1
+          fi
+          echo "✅ Code is properly formatted"
+
+      - name: Run go vet
+        working-directory: 02-intermediate/${{ matrix.exercise }}
+        run: |
+          if go vet ./...; then
+            echo "✅ No vet warnings"
+          else
+            echo "❌ Vet found issues"
+            exit 1
+          fi
+
+      - name: Run tests
+        working-directory: 02-intermediate/${{ matrix.exercise }}
+        run: |
+          echo "🧪 Testing student implementation..."
+          if go test -v -cover ./...; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Tests failed - keep working on this exercise!"
+            exit 1
+          fi
+
+  # Test Concurrency Module (03-concurrency)
+  test-concurrency:
+    name: "Concurrency: ${{ matrix.exercise }}"
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        exercise:
+          - 01-goroutines-intro
+          - 02-channels-basics
+          - 03-channel-patterns
+          - 04-select-statement
+          - 05-context-management
+          - 06-mutex-rwmutex
+          - 07-atomic-operations
+          - 08-race-detector
+          - 09-rate-limiting
+          - 10-producer-consumer
+          - 11-concurrent-cache
+          - 12-task-scheduler
+          - 13-graceful-shutdown
+          - 14-parallel-processing
+          - 15-sync-primitives
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check exercise structure
+        working-directory: 03-concurrency/${{ matrix.exercise }}
+        run: |
+          if [ ! -f "go.mod" ]; then
+            echo "❌ No go.mod found"
+            exit 1
+          fi
+          if [ ! -f "main.go" ]; then
+            echo "❌ No main.go found"
+            exit 1
+          fi
+          if [ ! -f "main_test.go" ]; then
+            echo "❌ No main_test.go found"
+            exit 1
+          fi
+          echo "✅ Exercise structure valid"
+
+      - name: Download dependencies
+        working-directory: 03-concurrency/${{ matrix.exercise }}
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run gofmt check
+        working-directory: 03-concurrency/${{ matrix.exercise }}
+        run: |
+          unformatted=$(gofmt -l main.go)
+          if [ -n "$unformatted" ]; then
+            echo "❌ Code is not properly formatted"
+            echo "Run: gofmt -w main.go"
+            gofmt -d main.go
+            exit 1
+          fi
+          echo "✅ Code is properly formatted"
+
+      - name: Run go vet
+        working-directory: 03-concurrency/${{ matrix.exercise }}
+        run: |
+          if go vet ./...; then
+            echo "✅ No vet warnings"
+          else
+            echo "❌ Vet found issues"
+            exit 1
+          fi
+
+      - name: Run tests
+        working-directory: 03-concurrency/${{ matrix.exercise }}
+        run: |
+          echo "🧪 Testing student implementation..."
+          if go test -v -cover ./...; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Tests failed - keep working on this exercise!"
+            exit 1
+          fi
+
+      - name: Run race detector
+        working-directory: 03-concurrency/${{ matrix.exercise }}
         run: |
           echo "🏁 Running race detector..."
           if go test -race -short -v ./...; then
             echo "✅ No race conditions detected"
           else
             echo "❌ Race conditions found"
+            exit 1
+          fi
+
+  # Test Advanced Module (04-advanced)
+  test-advanced:
+    name: "Advanced: ${{ matrix.exercise }}"
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        exercise:
+          - 01-custom-errors
+          - 02-reflection-basics
+          - 03-code-generation
+          - 04-benchmarking
+          - 05-testing-advanced
+          - 06-dependency-injection
+          - 07-database-access
+          - 08-orm-patterns
+          - 09-websockets
+          - 10-grpc-basics
+          - 11-template-engine
+          - 12-plugin-system
+          - 13-memory-optimization
+          - 14-cgo-basics
+          - 15-build-tools
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check exercise structure
+        working-directory: 04-advanced/${{ matrix.exercise }}
+        run: |
+          if [ ! -f "go.mod" ]; then
+            echo "❌ No go.mod found"
+            exit 1
+          fi
+          if [ ! -f "main.go" ]; then
+            echo "❌ No main.go found"
+            exit 1
+          fi
+          if [ ! -f "main_test.go" ]; then
+            echo "❌ No main_test.go found"
+            exit 1
+          fi
+          echo "✅ Exercise structure valid"
+
+      - name: Download dependencies
+        working-directory: 04-advanced/${{ matrix.exercise }}
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run gofmt check
+        working-directory: 04-advanced/${{ matrix.exercise }}
+        run: |
+          unformatted=$(gofmt -l main.go)
+          if [ -n "$unformatted" ]; then
+            echo "❌ Code is not properly formatted"
+            echo "Run: gofmt -w main.go"
+            gofmt -d main.go
+            exit 1
+          fi
+          echo "✅ Code is properly formatted"
+
+      - name: Run go vet
+        working-directory: 04-advanced/${{ matrix.exercise }}
+        run: |
+          if go vet ./...; then
+            echo "✅ No vet warnings"
+          else
+            echo "❌ Vet found issues"
+            exit 1
+          fi
+
+      - name: Run tests
+        working-directory: 04-advanced/${{ matrix.exercise }}
+        run: |
+          echo "🧪 Testing student implementation..."
+          if go test -v -cover ./...; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Tests failed - keep working on this exercise!"
+            exit 1
+          fi
+
+  # Test Projects Module (05-projects)
+  test-projects:
+    name: "Projects: ${{ matrix.exercise }}"
+    needs: detect-environment
+    if: needs.detect-environment.outputs.is_fork == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        exercise:
+          - 01-cli-tool
+          - 02-rest-api
+          - 03-concurrent-crawler
+          - 04-key-value-store
+          - 05-distributed-task-queue
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check exercise structure
+        working-directory: 05-projects/${{ matrix.exercise }}
+        run: |
+          if [ ! -f "go.mod" ]; then
+            echo "❌ No go.mod found"
+            exit 1
+          fi
+          if [ ! -f "main.go" ]; then
+            echo "❌ No main.go found"
+            exit 1
+          fi
+          if [ ! -f "main_test.go" ]; then
+            echo "❌ No main_test.go found"
+            exit 1
+          fi
+          echo "✅ Exercise structure valid"
+
+      - name: Download dependencies
+        working-directory: 05-projects/${{ matrix.exercise }}
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run gofmt check
+        working-directory: 05-projects/${{ matrix.exercise }}
+        run: |
+          unformatted=$(gofmt -l main.go)
+          if [ -n "$unformatted" ]; then
+            echo "❌ Code is not properly formatted"
+            echo "Run: gofmt -w main.go"
+            gofmt -d main.go
+            exit 1
+          fi
+          echo "✅ Code is properly formatted"
+
+      - name: Run go vet
+        working-directory: 05-projects/${{ matrix.exercise }}
+        run: |
+          if go vet ./...; then
+            echo "✅ No vet warnings"
+          else
+            echo "❌ Vet found issues"
+            exit 1
+          fi
+
+      - name: Run tests
+        working-directory: 05-projects/${{ matrix.exercise }}
+        run: |
+          echo "🧪 Testing student implementation..."
+          if go test -v -cover ./...; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Tests failed - keep working on this exercise!"
             exit 1
           fi
 
@@ -170,7 +526,7 @@ jobs:
   # Track progress and generate summary
   track-progress:
     name: Progress Tracker
-    needs: [detect-environment, test-student-code]
+    needs: [detect-environment, test-basics, test-intermediate, test-concurrency, test-advanced, test-projects]
     if: |
       always() &&
       needs.detect-environment.outputs.is_fork == 'true'
@@ -183,15 +539,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Calculate progress
+      - name: Calculate progress by module
         id: progress
         run: |
-          total=$(find . -name "go.mod" -path "*/[0-9]*" | wc -l)
-          echo "total=$total" >> $GITHUB_OUTPUT
+          echo "## Module Progress" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          # This is a simplified version - actual passing count would come from test results
-          # For now, we'll create a placeholder that students can see
-          echo "Total exercises: $total"
+          # Count exercises per module
+          basics_total=15
+          intermediate_total=15
+          concurrency_total=15
+          advanced_total=15
+          projects_total=5
+          total=$((basics_total + intermediate_total + concurrency_total + advanced_total + projects_total))
+
+          echo "total=$total" >> $GITHUB_OUTPUT
+          echo "Total exercises: $total" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Module status summary
+          echo "| Module | Exercises | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📚 Basics | 15 | ${{ needs.test-basics.result == 'success' && '✅ All passing' || '🟡 In progress' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔧 Intermediate | 15 | ${{ needs.test-intermediate.result == 'success' && '✅ All passing' || '🟡 In progress' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚡ Concurrency | 15 | ${{ needs.test-concurrency.result == 'success' && '✅ All passing' || '🟡 In progress' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🚀 Advanced | 15 | ${{ needs.test-advanced.result == 'success' && '✅ All passing' || '🟡 In progress' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎯 Projects | 5 | ${{ needs.test-projects.result == 'success' && '✅ All passing' || '🟡 In progress' }} |" >> $GITHUB_STEP_SUMMARY
 
       - name: Generate progress badge
         run: |
@@ -342,45 +715,71 @@ jobs:
           cat >> $GITHUB_STEP_SUMMARY << 'EOF'
           ## 🎯 Go Training Progress
 
-          ### Summary
-          - **Total Exercises**: 65
-          - **Completed**: Check individual exercise results above
-          - **Note**: This is your first run! All exercises will show as failing until you implement solutions.
+          ### Learning Path Structure
+          The exercises are organized into 5 progressive modules:
 
-          ### Next Steps
-          1. Pick an exercise to work on (start with `basics/01-string-manipulation`)
-          2. Read the README.md in the exercise directory
-          3. Implement the solution in `main.go`
-          4. Run `go test -v` locally to check your work
-          5. Push your code to see it turn green in CI!
+          1. **📚 Basics** (15 exercises) - Core Go fundamentals
+          2. **🔧 Intermediate** (15 exercises) - Intermediate patterns and libraries
+          3. **⚡ Concurrency** (15 exercises) - Goroutines, channels, and synchronization
+          4. **🚀 Advanced** (15 exercises) - Advanced techniques and integrations
+          5. **🎯 Projects** (5 exercises) - Complete application projects
+
+          ### Your Progress
+          Check the module status table above to see which modules you've completed!
+          - ✅ **All passing** = Module complete, move to the next one
+          - 🟡 **In progress** = Some exercises still need work
+          - Expand each module section in the Actions UI to see individual exercise results
+
+          ### Getting Started
+          1. **Start with Basics**: Begin with `01-basics/01-string-manipulation`
+          2. **Read the README**: Each exercise has instructions and requirements
+          3. **Implement & Test**: Code in `main.go`, test with `go test -v`
+          4. **Push & Validate**: GitHub Actions will validate your solution
+          5. **Complete the Module**: Finish all 15 exercises before moving to Intermediate
 
           ### Getting Help
           - Check `HINTS.md` in each exercise for guidance
           - Look at test cases in `main_test.go` to understand requirements
-          - Teaching exercises (intermediate/12, 15, advanced/07) have complete implementations to learn from
+          - Teaching exercises have complete implementations to learn from:
+            - `02-intermediate/12-packages`
+            - `02-intermediate/15-http-server`
+            - `04-advanced/07-database-access`
 
-          ### Quality Checks
-          Your code is automatically checked for:
+          ### Quality Standards
+          Every exercise is automatically validated for:
           - ✅ Tests passing
           - ✅ Proper formatting (gofmt)
           - ✅ No vet warnings
           - ✅ Code quality (golangci-lint)
-          - ✅ Race conditions (concurrency exercises)
+          - ✅ Race conditions (concurrency exercises only)
 
-          Keep going! 🚀
+          Keep going! Complete one module at a time! 🚀
           EOF
 
   # Summary job that always runs
   summary:
     name: Validation Summary
-    needs: [detect-environment, test-student-code, quality-checks, track-progress]
+    needs: [detect-environment, test-basics, test-intermediate, test-concurrency, test-advanced, test-projects, quality-checks, track-progress]
     if: always() && needs.detect-environment.outputs.is_fork == 'true'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Summary
+      - name: Module Summary
         run: |
-          echo "## Student Validation Complete"
+          echo "## 🎓 Go Training Validation Complete"
           echo ""
-          echo "Check individual exercise results above for details."
-          echo "Keep working on failing exercises - you've got this! 💪"
+          echo "### Module Results"
+          echo ""
+          echo "- 📚 **Basics**: ${{ needs.test-basics.result == 'success' && '✅ All passing' || needs.test-basics.result == 'failure' && '❌ Some failing' || '⏭️ Skipped' }}"
+          echo "- 🔧 **Intermediate**: ${{ needs.test-intermediate.result == 'success' && '✅ All passing' || needs.test-intermediate.result == 'failure' && '❌ Some failing' || '⏭️ Skipped' }}"
+          echo "- ⚡ **Concurrency**: ${{ needs.test-concurrency.result == 'success' && '✅ All passing' || needs.test-concurrency.result == 'failure' && '❌ Some failing' || '⏭️ Skipped' }}"
+          echo "- 🚀 **Advanced**: ${{ needs.test-advanced.result == 'success' && '✅ All passing' || needs.test-advanced.result == 'failure' && '❌ Some failing' || '⏭️ Skipped' }}"
+          echo "- 🎯 **Projects**: ${{ needs.test-projects.result == 'success' && '✅ All passing' || needs.test-projects.result == 'failure' && '❌ Some failing' || '⏭️ Skipped' }}"
+          echo ""
+          echo "### Next Steps"
+          echo "1. Review individual exercise results above (grouped by module)"
+          echo "2. Focus on exercises marked with ❌"
+          echo "3. Run \`go test -v\` locally to debug failures"
+          echo "4. Push your fixes and watch the tests turn green!"
+          echo ""
+          echo "Keep going! You've got this! 💪"
