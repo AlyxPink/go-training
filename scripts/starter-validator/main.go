@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -21,6 +22,14 @@ var (
 	titleStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("12")).Bold(true)
 )
 
+// Command-line flags
+var (
+	verbose    bool
+	outputFile string
+	noColor    bool
+	showProgress bool
+)
+
 type TestResult struct {
 	Exercise string
 	Status   string // "pass", "fail", "warn"
@@ -32,11 +41,13 @@ type TestResult struct {
 type ExerciseTester struct {
 	repoRoot string
 	printMu  sync.Mutex
+	verbose  bool
 }
 
-func NewExerciseTester(repoRoot string) *ExerciseTester {
+func NewExerciseTester(repoRoot string, verbose bool) *ExerciseTester {
 	return &ExerciseTester{
 		repoRoot: repoRoot,
+		verbose:  verbose,
 	}
 }
 
@@ -45,8 +56,16 @@ func (et *ExerciseTester) printResult(result TestResult) {
 	defer et.printMu.Unlock()
 
 	if result.Status == "pass" {
-		// Success: single line
+		// Success: single line (unless verbose)
+		if et.verbose {
+			for _, log := range result.Logs {
+				fmt.Println(log)
+			}
+		}
 		fmt.Println(successStyle.Render("✅") + " " + result.Exercise)
+		if et.verbose {
+			fmt.Println()
+		}
 	} else {
 		// Failure/Warning: show all logs
 		for _, log := range result.Logs {
@@ -130,15 +149,24 @@ func (et *ExerciseTester) testExercise(exercise string) TestResult {
 	cmd.Dir = exercisePath
 
 	// Set timeout
-	done := make(chan error, 1)
+	type testOutput struct {
+		output []byte
+		err    error
+	}
+	done := make(chan testOutput, 1)
 	go func() {
-		_, err := cmd.CombinedOutput()
-		done <- err
+		output, err := cmd.CombinedOutput()
+		done <- testOutput{output, err}
 	}()
 
 	select {
-	case err := <-done:
-		if err == nil {
+	case testOut := <-done:
+		if et.verbose && len(testOut.output) > 0 {
+			result.Logs = append(result.Logs, "")
+			result.Logs = append(result.Logs, "Test output:")
+			result.Logs = append(result.Logs, string(testOut.output))
+		}
+		if testOut.err == nil {
 			// Tests passed - this is good
 			result.Status = "pass"
 			result.Message = ""
@@ -228,10 +256,27 @@ func findExercises(repoRoot string) ([]string, error) {
 }
 
 func main() {
+	// Parse flags
+	flag.BoolVar(&verbose, "v", false, "Show detailed test output (verbose mode)")
+	flag.BoolVar(&verbose, "verbose", false, "Show detailed test output (verbose mode)")
+	flag.StringVar(&outputFile, "output", "", "Write failed exercises to file")
+	flag.BoolVar(&noColor, "no-color", false, "Disable colored output")
+	flag.BoolVar(&showProgress, "progress", true, "Show live progress updates")
+	flag.Parse()
+
+	// Disable colors if requested
+	if noColor {
+		successStyle = lipgloss.NewStyle()
+		failStyle = lipgloss.NewStyle()
+		warnStyle = lipgloss.NewStyle()
+		dimStyle = lipgloss.NewStyle()
+		titleStyle = lipgloss.NewStyle()
+	}
+
 	// When running from scripts/starter-validator, go up two levels to project root
 	repoRoot := filepath.Join("..", "..")
-	if len(os.Args) > 1 {
-		repoRoot = os.Args[1]
+	if flag.NArg() > 0 {
+		repoRoot = flag.Arg(0)
 	}
 
 	absRoot, err := filepath.Abs(repoRoot)
@@ -262,9 +307,36 @@ func main() {
 	startTime := time.Now()
 
 	// Run tests concurrently
-	tester := NewExerciseTester(absRoot)
+	tester := NewExerciseTester(absRoot, verbose)
 	results := make(chan TestResult, len(exercises))
 	semaphore := make(chan struct{}, 10) // 10 concurrent workers
+
+	// Progress tracking
+	var completed, total int32 = 0, int32(len(exercises))
+	var progressMu sync.Mutex
+	stopProgress := make(chan bool)
+
+	// Start progress monitor if enabled
+	if showProgress && !verbose {
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-stopProgress:
+					return
+				case <-ticker.C:
+					progressMu.Lock()
+					current := completed
+					progressMu.Unlock()
+					fmt.Printf("\r%s Testing... %d/%d exercises completed",
+						dimStyle.Render("🔄"),
+						current,
+						total)
+				}
+			}
+		}()
+	}
 
 	var wg sync.WaitGroup
 	for _, exercise := range exercises {
@@ -279,6 +351,11 @@ func main() {
 
 			// Print result immediately (synchronized)
 			tester.printResult(result)
+
+			// Update progress
+			progressMu.Lock()
+			completed++
+			progressMu.Unlock()
 		}(exercise)
 	}
 
@@ -292,6 +369,12 @@ func main() {
 	allResults := make([]TestResult, 0, len(exercises))
 	for result := range results {
 		allResults = append(allResults, result)
+	}
+
+	// Stop progress monitor
+	if showProgress && !verbose {
+		stopProgress <- true
+		fmt.Print("\r" + strings.Repeat(" ", 80) + "\r") // Clear progress line
 	}
 
 	elapsed := time.Since(startTime)
@@ -346,6 +429,33 @@ func main() {
 	fmt.Printf("Warnings: %s\n", warnStyle.Render(fmt.Sprintf("%d", warned)))
 	fmt.Printf("Time:     %s\n", dimStyle.Render(elapsed.Round(time.Second).String()))
 	fmt.Println()
+
+	// Write output file if requested
+	if outputFile != "" && (failed > 0 || warned > 0) {
+		f, err := os.Create(outputFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error creating output file: %v\n", err)
+		} else {
+			defer f.Close()
+			if failed > 0 {
+				fmt.Fprintln(f, "# Failed Exercises")
+				for _, result := range failedExercises {
+					fmt.Fprintf(f, "%s - %s\n", result.Exercise, result.Message)
+				}
+			}
+			if warned > 0 {
+				if failed > 0 {
+					fmt.Fprintln(f, "")
+				}
+				fmt.Fprintln(f, "# Warned Exercises")
+				for _, result := range warnedExercises {
+					fmt.Fprintf(f, "%s - %s\n", result.Exercise, result.Message)
+				}
+			}
+			fmt.Printf("Output written to: %s\n", outputFile)
+			fmt.Println()
+		}
+	}
 
 	if failed == 0 {
 		fmt.Println(successStyle.Render("✅ All starter code validations passed"))
