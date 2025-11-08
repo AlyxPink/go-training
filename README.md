@@ -1,5 +1,10 @@
 # Go Training Exercises
 
+[![Validate Exercises](https://github.com/AlyxPink/go-training/actions/workflows/validate-exercises.yml/badge.svg)](https://github.com/AlyxPink/go-training/actions/workflows/validate-exercises.yml)
+[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go)](https://go.dev/)
+[![Exercises](https://img.shields.io/badge/Exercises-65-success)](.)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A comprehensive collection of 65+ Go exercises designed to build strong coding skills for technical interviews and real-world development.
 
 ## Purpose
@@ -188,6 +193,21 @@ go test -bench=. -benchmem
 cd basics
 go test ./...
 ```
+
+## Continuous Integration
+
+This repository includes GitHub Actions workflows that automatically validate all exercises:
+
+- **Starter Code Validation**: Ensures all exercises compile and have proper structure
+- **Solution Validation**: Verifies all reference solutions pass their tests
+- **Race Detection**: Runs concurrency exercises with `-race` flag to detect data races
+- **Parallel Execution**: All 65 exercises run in parallel for fast feedback
+
+Each push and pull request triggers the validation workflow, providing immediate feedback on exercise health.
+
+### CI Status
+
+The workflow runs 130 parallel jobs (65 for starter code + 65 for solutions) and typically completes in 5-10 minutes. Check the [Actions tab](../../actions) for detailed results.
 
 ## Contributing
 
