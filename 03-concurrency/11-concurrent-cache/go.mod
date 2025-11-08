@@ -1,3 +1,3 @@
 module 11-concurrent-cache
 
-go 1.21
+go 1.25

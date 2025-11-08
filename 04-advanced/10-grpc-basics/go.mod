@@ -1,6 +1,6 @@
 module github.com/alyxpink/go-training/advanced/10-grpc-basics
 
-go 1.24.0
+go 1.25
 
 require (
 	google.golang.org/grpc v1.76.0

@@ -1,2 +1,3 @@
 module 10-type-conversions
-go 1.21
+
+go 1.25

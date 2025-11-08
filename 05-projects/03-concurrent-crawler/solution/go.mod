@@ -1,6 +1,6 @@
 module github.com/alyxpink/go-training/crawler
 
-go 1.21
+go 1.25
 
 require (
 	golang.org/x/net v0.20.0

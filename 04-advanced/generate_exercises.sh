@@ -11,7 +11,7 @@ BASE_DIR="/home/alyx/code/AlyxPink/go-training/advanced"
 cat > "$BASE_DIR/03-code-generation/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/03-code-generation
 
-go 1.21
+go 1.25
 EOF
 
 cat > "$BASE_DIR/03-code-generation/HINTS.md" << 'EOF'
@@ -104,7 +104,7 @@ EOF
 cat > "$BASE_DIR/04-benchmarking/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/04-benchmarking
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 05: Advanced Testing
@@ -165,7 +165,7 @@ EOF
 cat > "$BASE_DIR/05-testing-advanced/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/05-testing-advanced
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 06: Dependency Injection
@@ -205,7 +205,7 @@ EOF
 cat > "$BASE_DIR/06-dependency-injection/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/06-dependency-injection
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 07: Database Access
@@ -245,7 +245,7 @@ EOF
 cat > "$BASE_DIR/07-database-access/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/07-database-access
 
-go 1.21
+go 1.25
 
 require github.com/mattn/go-sqlite3 v1.14.18
 EOF
@@ -287,7 +287,7 @@ EOF
 cat > "$BASE_DIR/08-orm-patterns/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/08-orm-patterns
 
-go 1.21
+go 1.25
 
 require github.com/mattn/go-sqlite3 v1.14.18
 EOF
@@ -329,7 +329,7 @@ EOF
 cat > "$BASE_DIR/09-websockets/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/09-websockets
 
-go 1.21
+go 1.25
 
 require github.com/gorilla/websocket v1.5.1
 EOF
@@ -371,7 +371,7 @@ EOF
 cat > "$BASE_DIR/10-grpc-basics/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/10-grpc-basics
 
-go 1.21
+go 1.25
 
 require (
     google.golang.org/grpc v1.60.0
@@ -416,7 +416,7 @@ EOF
 cat > "$BASE_DIR/11-template-engine/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/11-template-engine
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 12: Plugin System
@@ -456,7 +456,7 @@ EOF
 cat > "$BASE_DIR/12-plugin-system/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/12-plugin-system
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 13: Memory Optimization
@@ -496,7 +496,7 @@ EOF
 cat > "$BASE_DIR/13-memory-optimization/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/13-memory-optimization
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 14: CGO Basics
@@ -536,7 +536,7 @@ EOF
 cat > "$BASE_DIR/14-cgo-basics/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/14-cgo-basics
 
-go 1.21
+go 1.25
 EOF
 
 # Exercise 15: Build Tools
@@ -576,7 +576,7 @@ EOF
 cat > "$BASE_DIR/15-build-tools/go.mod" << 'EOF'
 module github.com/alyxpink/go-training/advanced/15-build-tools
 
-go 1.21
+go 1.25
 EOF
 
 echo "Exercise structure files created successfully!"

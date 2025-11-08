@@ -1,3 +1,3 @@
 module 15-sync-primitives
 
-go 1.21
+go 1.25

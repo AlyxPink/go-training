@@ -60,7 +60,7 @@ EOF
     cat > "$DIR/go.mod" << EOF
 module $name
 
-go 1.21
+go 1.25
 EOF
 
     echo "Created $num-$name structure"

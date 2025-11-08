@@ -1,3 +1,3 @@
 module 10-producer-consumer
 
-go 1.21
+go 1.25

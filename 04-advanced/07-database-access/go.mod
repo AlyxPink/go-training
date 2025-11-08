@@ -1,5 +1,5 @@
 module github.com/alyxpink/go-training/advanced/07-database-access
 
-go 1.21
+go 1.25
 
 require github.com/mattn/go-sqlite3 v1.14.32
