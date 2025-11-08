@@ -10,7 +10,7 @@ import (
 func TestNewLRUCache(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			t.Skip("Function not implemented yet")
+			t.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -33,10 +33,7 @@ func TestNewLRUCache(t *testing.T) {
 func TestLRUCacheBasicOperations(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -72,10 +69,7 @@ func TestLRUCacheBasicOperations(t *testing.T) {
 func TestLRUCacheEviction(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -115,10 +109,7 @@ func TestLRUCacheEviction(t *testing.T) {
 func TestLRUCacheUpdate(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -149,10 +140,7 @@ func TestLRUCacheUpdate(t *testing.T) {
 func TestLRUCacheConcurrentReads(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -190,10 +178,7 @@ func TestLRUCacheConcurrentReads(t *testing.T) {
 func TestLRUCacheConcurrentWrites(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -228,10 +213,7 @@ func TestLRUCacheConcurrentWrites(t *testing.T) {
 func TestLRUCacheConcurrentReadWrite(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -279,10 +261,7 @@ func TestLRUCacheStress(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -318,10 +297,7 @@ func TestLRUCacheStress(t *testing.T) {
 func TestLRUCacheCapacityOne(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -346,10 +322,7 @@ func TestLRUCacheCapacityOne(t *testing.T) {
 func TestLRUCacheStats(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -379,7 +352,7 @@ func TestLRUCacheStats(t *testing.T) {
 func BenchmarkLRUCacheGet(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -406,7 +379,7 @@ func BenchmarkLRUCacheGet(b *testing.B) {
 func BenchmarkLRUCacheSet(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 

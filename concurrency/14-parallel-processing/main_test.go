@@ -11,10 +11,7 @@ import (
 func TestMapReduceBasic(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -38,10 +35,7 @@ func TestMapReduceBasic(t *testing.T) {
 func TestMapReduceSum(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -65,10 +59,7 @@ func TestMapReduceSum(t *testing.T) {
 func TestMapReduceProduct(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -92,10 +83,7 @@ func TestMapReduceProduct(t *testing.T) {
 func TestMapReduceMax(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -149,10 +137,7 @@ func TestMapReduceEmpty(t *testing.T) {
 func TestMapReduceOneWorker(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -175,10 +160,7 @@ func TestMapReduceOneWorker(t *testing.T) {
 func TestMapReduceManyWorkers(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -201,10 +183,7 @@ func TestMapReduceManyWorkers(t *testing.T) {
 func TestParallelFilterBasic(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -231,10 +210,7 @@ func TestParallelFilterBasic(t *testing.T) {
 func TestParallelFilterOdd(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -258,10 +234,7 @@ func TestParallelFilterOdd(t *testing.T) {
 func TestParallelFilterGreaterThan(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -285,10 +258,7 @@ func TestParallelFilterGreaterThan(t *testing.T) {
 func TestParallelFilterNone(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -309,10 +279,7 @@ func TestParallelFilterNone(t *testing.T) {
 func TestParallelFilterAll(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -335,10 +302,7 @@ func TestParallelFilterAll(t *testing.T) {
 func TestParallelFilterEmpty(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -359,10 +323,7 @@ func TestParallelFilterEmpty(t *testing.T) {
 func TestParallelFilterOneWorker(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -386,10 +347,7 @@ func TestParallelFilterOneWorker(t *testing.T) {
 func TestParallelProcessingConcurrency(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -430,10 +388,7 @@ func TestMapReduceLargeData(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -460,7 +415,7 @@ func TestMapReduceLargeData(t *testing.T) {
 func BenchmarkMapReduce(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -485,7 +440,7 @@ func BenchmarkMapReduce(b *testing.B) {
 func BenchmarkParallelFilter(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -509,7 +464,7 @@ func BenchmarkParallelFilter(b *testing.B) {
 func BenchmarkWorkerScaling(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 

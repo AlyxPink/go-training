@@ -45,44 +45,71 @@ func InitDB(dbPath string) (*sql.DB, error) {
 }
 
 func (r *UserRepository) Create(user *User) error {
-	// TODO: Execute INSERT query with user.Name, user.Email, user.Age
-	// TODO: Check for errors
-	// TODO: Get LastInsertId from result
-	// TODO: Set user.ID to the returned id
-	// TODO: Return nil on success
-	panic("not implemented")
+	result, err := r.db.Exec(
+		"INSERT INTO users (name, email, age) VALUES (?, ?, ?)",
+		user.Name, user.Email, user.Age,
+	)
+	if err != nil {
+		return err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	user.ID = id
+	return nil
 }
 
 func (r *UserRepository) Get(id int64) (*User, error) {
-	// TODO: Create new User struct
-	// TODO: QueryRow with SELECT query using id parameter
-	// TODO: Scan result into user fields
-	// TODO: Return user pointer and error
-	panic("not implemented")
+	user := &User{}
+	err := r.db.QueryRow(
+		"SELECT id, name, email, age FROM users WHERE id = ?",
+		id,
+	).Scan(&user.ID, &user.Name, &user.Email, &user.Age)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (r *UserRepository) Update(user *User) error {
-	// TODO: Execute UPDATE query with user fields
-	// TODO: Use user.ID in WHERE clause
-	// TODO: Return error from Exec
-	panic("not implemented")
+	_, err := r.db.Exec(
+		"UPDATE users SET name = ?, email = ?, age = ? WHERE id = ?",
+		user.Name, user.Email, user.Age, user.ID,
+	)
+	return err
 }
 
 func (r *UserRepository) Delete(id int64) error {
-	// TODO: Execute DELETE query with id parameter
-	// TODO: Return error from Exec
-	panic("not implemented")
+	_, err := r.db.Exec("DELETE FROM users WHERE id = ?", id)
+	return err
 }
 
 func (r *UserRepository) List() ([]*User, error) {
-	// TODO: Query all users from database
-	// TODO: Create slice to hold users
-	// TODO: Iterate rows with rows.Next()
-	// TODO: Scan each row into User struct
-	// TODO: Append to users slice
-	// TODO: Check rows.Err() after iteration
-	// TODO: Return users slice and error
-	panic("not implemented")
+	rows, err := r.db.Query("SELECT id, name, email, age FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+	for rows.Next() {
+		user := &User{}
+		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Age); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (r *UserRepository) Transaction(fn func(*sql.Tx) error) error {

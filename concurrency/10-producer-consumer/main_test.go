@@ -9,7 +9,7 @@ import (
 func TestNewProducerConsumer(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			t.Skip("Function not implemented yet")
+			t.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -29,10 +29,7 @@ func TestNewProducerConsumer(t *testing.T) {
 func TestProducerConsumerBasic(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -73,10 +70,7 @@ func TestProducerConsumerBasic(t *testing.T) {
 func TestProducerConsumerMultiple(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -118,10 +112,7 @@ func TestProducerConsumerMultiple(t *testing.T) {
 func TestProducerConsumerBufferFull(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -157,10 +148,7 @@ func TestProducerConsumerBufferFull(t *testing.T) {
 func TestProducerConsumerNoDeadlock(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -191,10 +179,7 @@ func TestProducerConsumerNoDeadlock(t *testing.T) {
 func TestProducerConsumerShutdown(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -237,10 +222,7 @@ func TestProducerConsumerShutdown(t *testing.T) {
 func TestProducerConsumerOrdering(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -271,10 +253,7 @@ func TestProducerConsumerOrdering(t *testing.T) {
 func TestProducerConsumerEmptyBuffer(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -312,10 +291,7 @@ func TestProducerConsumerStress(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -358,7 +334,7 @@ func TestProducerConsumerStress(t *testing.T) {
 func BenchmarkProducerConsumer(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 

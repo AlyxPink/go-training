@@ -10,10 +10,7 @@ import (
 func TestGetDatabase(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -33,10 +30,7 @@ func TestGetDatabase(t *testing.T) {
 func TestGetDatabaseConcurrent(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -68,7 +62,7 @@ func TestGetDatabaseConcurrent(t *testing.T) {
 	wg.Wait()
 
 	if panicked {
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	}
 
 	// All should be same instance
@@ -84,10 +78,7 @@ func TestGetDatabaseConcurrent(t *testing.T) {
 func TestGetBuffer(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -106,10 +97,7 @@ func TestGetBuffer(t *testing.T) {
 func TestBufferPoolReuse(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -139,10 +127,7 @@ func TestBufferPoolReuse(t *testing.T) {
 func TestBufferPoolConcurrent(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -179,7 +164,7 @@ func TestBufferPoolConcurrent(t *testing.T) {
 	wg.Wait()
 
 	if panicked {
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	}
 
 	t.Log("Concurrent buffer pool access completed")
@@ -202,10 +187,7 @@ func TestNewQueue(t *testing.T) {
 func TestQueuePushPop(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -245,7 +227,7 @@ func TestQueuePushPop(t *testing.T) {
 			}
 		}()
 		if panicked {
-			t.Skip("Function not implemented yet")
+			t.Fatal("Function not implemented or panic occurred")
 		}
 	}
 }
@@ -254,10 +236,7 @@ func TestQueuePushPop(t *testing.T) {
 func TestQueueBlockingPop(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -281,7 +260,7 @@ func TestQueueBlockingPop(t *testing.T) {
 	// Check if panicked early
 	select {
 	case <-panicked:
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	case <-time.After(50 * time.Millisecond):
 		// Continue with test
 	}
@@ -311,7 +290,7 @@ func TestQueueBlockingPop(t *testing.T) {
 			t.Errorf("Expected 42, got %d", popped)
 		}
 	case <-panicked:
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	case <-time.After(1 * time.Second):
 		t.Error("Pop did not unblock after Push")
 	}
@@ -321,10 +300,7 @@ func TestQueueBlockingPop(t *testing.T) {
 func TestQueueMultipleWaiters(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -372,7 +348,7 @@ func TestQueueMultipleWaiters(t *testing.T) {
 	wg.Wait()
 
 	if panicked {
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	}
 
 	// Verify all got values
@@ -390,10 +366,7 @@ func TestQueueMultipleWaiters(t *testing.T) {
 func TestQueueConcurrentPushPop(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -449,7 +422,7 @@ func TestQueueConcurrentPushPop(t *testing.T) {
 	wg.Wait()
 
 	if panicked {
-		t.Skip("Function not implemented yet")
+		t.Fatal("Function not implemented or panic occurred")
 	}
 
 	if len(consumed) != 30 {
@@ -461,10 +434,7 @@ func TestQueueConcurrentPushPop(t *testing.T) {
 func TestQueueFIFO(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			if r == "not implemented" {
-				t.Skip("Function not implemented yet")
-			}
-			t.Errorf("Unexpected panic: %v", r)
+			t.Fatalf("Function not implemented or panic occurred: %v", r)
 		}
 	}()
 
@@ -488,7 +458,7 @@ func TestQueueFIFO(t *testing.T) {
 func BenchmarkGetDatabase(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -503,7 +473,7 @@ func BenchmarkGetDatabase(b *testing.B) {
 func BenchmarkBufferPool(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
@@ -519,7 +489,7 @@ func BenchmarkBufferPool(b *testing.B) {
 func BenchmarkQueue(b *testing.B) {
 	defer func() {
 		if r := recover(); r != nil {
-			b.Skip("Function not implemented yet")
+			b.Fatalf("Function not implemented: %v", r)
 		}
 	}()
 
