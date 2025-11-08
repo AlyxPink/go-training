@@ -53,72 +53,28 @@ type Stats struct {
 
 func NewPriorityQueue() *PriorityQueue {
 	// TODO: Initialize priority queue
-	queues := make(map[int]chan *Task)
-	priorities := []int{1, 2, 3, 4, 5}
-	
-	for _, p := range priorities {
-		queues[p] = make(chan *Task, 1000)
-	}
-	
-	return &PriorityQueue{
-		queues:     queues,
-		priorities: priorities,
-		stats:      &Stats{},
-	}
+	panic("not implemented")
 }
 
 func (pq *PriorityQueue) Enqueue(task *Task) error {
 	// TODO: Add task to appropriate priority queue
-	pq.mu.RLock()
-	defer pq.mu.RUnlock()
-	
-	queue, exists := pq.queues[task.Priority]
-	if !exists {
-		return errors.New("invalid priority")
-	}
-	
-	select {
-	case queue <- task:
-		pq.stats.IncrementQueueLength()
-		return nil
-	default:
-		return ErrQueueFull
-	}
+	panic("not implemented")
 }
 
 func (pq *PriorityQueue) Dequeue(timeout time.Duration) (*Task, error) {
 	// TODO: Dequeue from highest priority non-empty queue
 	// Implement fair scheduling to prevent starvation
-	pq.mu.RLock()
-	defer pq.mu.RUnlock()
-	
-	// Try each priority level (highest first)
-	for i := len(pq.priorities) - 1; i >= 0; i-- {
-		priority := pq.priorities[i]
-		queue := pq.queues[priority]
-		
-		select {
-		case task := <-queue:
-			pq.stats.DecrementQueueLength()
-			return task, nil
-		default:
-			continue
-		}
-	}
-	
-	return nil, ErrQueueEmpty
+	panic("not implemented")
 }
 
 func (pq *PriorityQueue) Ack(taskID string) error {
 	// TODO: Mark task as completed
-	pq.stats.IncrementCompleted()
-	return nil
+	panic("not implemented")
 }
 
 func (pq *PriorityQueue) Nack(taskID string, retryDelay time.Duration) error {
 	// TODO: Re-queue task for retry
-	pq.stats.IncrementFailed()
-	return nil
+	panic("not implemented")
 }
 
 func (pq *PriorityQueue) GetStats() *Stats {

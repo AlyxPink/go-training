@@ -69,6 +69,8 @@ func validateField(fieldName string, value reflect.Value, rules string) []Valida
 					Field:   fieldName,
 					Message: "is required",
 				})
+				// If required validation fails, skip other validations
+				return errors
 			}
 			continue
 		}

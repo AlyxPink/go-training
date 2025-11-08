@@ -40,7 +40,7 @@ func TestIsPalindrome(t *testing.T) {
 		{"simple palindrome", "racecar", true},
 		{"not palindrome", "hello", false},
 		{"case insensitive palindrome", "RaceCar", true},
-		{"palindrome with spaces", "race car", false},
+		{"palindrome with spaces", "race car", true},
 		{"complex palindrome", "A man a plan a canal Panama", true},
 		{"palindrome with punctuation", "A man, a plan, a canal: Panama", true},
 		{"numeric palindrome", "12321", true},

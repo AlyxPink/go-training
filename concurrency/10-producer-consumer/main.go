@@ -22,7 +22,8 @@ type ProducerConsumer struct {
 // NewProducerConsumer creates a new system
 // TODO: Initialize with buffer size
 func NewProducerConsumer(bufferSize int) *ProducerConsumer {
-	return nil
+	// TODO: Implement this function
+	panic("not implemented")
 }
 
 // StartProducer launches a producer goroutine
@@ -31,6 +32,7 @@ func (pc *ProducerConsumer) StartProducer(id int, numItems int) {
 	// TODO: Produce items
 	// TODO: Handle shutdown signal
 	// TODO: Send items to buffer
+	panic("not implemented")
 }
 
 // StartConsumer launches a consumer goroutine
@@ -39,6 +41,7 @@ func (pc *ProducerConsumer) StartConsumer(id int) {
 	// TODO: Receive items from buffer
 	// TODO: Process items
 	// TODO: Handle shutdown
+	panic("not implemented")
 }
 
 // Shutdown gracefully stops the system
@@ -47,6 +50,7 @@ func (pc *ProducerConsumer) Shutdown() {
 	// TODO: Signal shutdown
 	// TODO: Wait for goroutines
 	// TODO: Close channels
+	panic("not implemented")
 }
 
 func main() {

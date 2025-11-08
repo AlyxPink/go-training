@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-// ValidationError represents a field validation error
 type ValidationError struct {
 	Field   string
 	Message string
@@ -18,128 +17,198 @@ func (e ValidationError) Error() string {
 	return fmt.Sprintf("%s: %s", e.Field, e.Message)
 }
 
-// Validate validates a struct based on validate tags
-// Supported tags: required, min=N, max=N, email, url
 func Validate(data interface{}) []ValidationError {
-	// TODO: Implement struct validation using reflection
-	// - Get reflect.Value and reflect.Type of data
-	// - Handle pointer types (dereference if needed)
-	// - Iterate through struct fields
-	// - Parse validate tags for each field
-	// - Apply validation rules based on field type
-	// - Collect and return validation errors
-	return nil
+	// TODO: Get reflect.Value and reflect.Type from data
+	// TODO: Handle pointer types by calling Elem()
+	// TODO: Return empty errors if not a struct
+	// TODO: Iterate through fields using NumField()
+	// TODO: Skip unexported fields using IsExported()
+	// TODO: Get "validate" tag and skip if empty
+	// TODO: Call validateField for each field with validation rules
+	// TODO: Collect and return all validation errors
+	panic("not implemented")
 }
 
-// validateField validates a single field based on rules
 func validateField(fieldName string, value reflect.Value, rules string) []ValidationError {
-	// TODO: Implement field validation
-	// - Split rules by comma
-	// - Check for "required" tag
-	// - Check for "min=N" and "max=N" tags
-	// - Check for "email" and "url" tags
-	// - Return validation errors
-	return nil
+	var errors []ValidationError
+	ruleParts := strings.Split(rules, ",")
+
+	for _, rule := range ruleParts {
+		rule = strings.TrimSpace(rule)
+
+		if rule == "required" {
+			if !isRequired(value) {
+				errors = append(errors, ValidationError{
+					Field:   fieldName,
+					Message: "is required",
+				})
+				// If required validation fails, skip other validations
+				return errors
+			}
+			continue
+		}
+
+		if strings.HasPrefix(rule, "min=") {
+			minVal, _ := strconv.Atoi(strings.TrimPrefix(rule, "min="))
+			if err := validateMin(value, minVal); err != nil {
+				errors = append(errors, ValidationError{
+					Field:   fieldName,
+					Message: err.Error(),
+				})
+			}
+			continue
+		}
+
+		if strings.HasPrefix(rule, "max=") {
+			maxVal, _ := strconv.Atoi(strings.TrimPrefix(rule, "max="))
+			if err := validateMax(value, maxVal); err != nil {
+				errors = append(errors, ValidationError{
+					Field:   fieldName,
+					Message: err.Error(),
+				})
+			}
+			continue
+		}
+
+		if rule == "email" && value.Kind() == reflect.String {
+			if !validateEmail(value.String()) {
+				errors = append(errors, ValidationError{
+					Field:   fieldName,
+					Message: "invalid email format",
+				})
+			}
+			continue
+		}
+
+		if rule == "url" && value.Kind() == reflect.String {
+			if value.String() != "" && !validateURL(value.String()) {
+				errors = append(errors, ValidationError{
+					Field:   fieldName,
+					Message: "invalid URL format",
+				})
+			}
+		}
+	}
+
+	return errors
 }
 
-// isRequired checks if value satisfies "required" constraint
 func isRequired(value reflect.Value) bool {
-	// TODO: Check if value is zero/empty
-	// - Handle different kinds (string, int, ptr, etc.)
-	return false
+	return !value.IsZero()
 }
 
-// validateMin validates minimum value/length constraint
 func validateMin(value reflect.Value, min int) error {
-	// TODO: Validate minimum based on field kind
-	// - For strings: check length
-	// - For numbers: check value
-	// - Return ValidationError if invalid
+	switch value.Kind() {
+	case reflect.String:
+		if len(value.String()) < min {
+			return fmt.Errorf("minimum length %d", min)
+		}
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if value.Int() < int64(min) {
+			return fmt.Errorf("minimum value %d", min)
+		}
+	}
 	return nil
 }
 
-// validateMax validates maximum value/length constraint
 func validateMax(value reflect.Value, max int) error {
-	// TODO: Validate maximum based on field kind
-	// - For strings: check length
-	// - For numbers: check value
-	// - Return ValidationError if invalid
+	switch value.Kind() {
+	case reflect.String:
+		if len(value.String()) > max {
+			return fmt.Errorf("maximum length %d", max)
+		}
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if value.Int() > int64(max) {
+			return fmt.Errorf("maximum value %d", max)
+		}
+	}
 	return nil
 }
 
-// validateEmail validates email format
 func validateEmail(value string) bool {
-	// TODO: Implement basic email validation
-	// Simple regex: ^[^@]+@[^@]+\.[^@]+$
-	return false
+	emailRegex := regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`)
+	return emailRegex.MatchString(value)
 }
 
-// validateURL validates URL format
 func validateURL(value string) bool {
-	// TODO: Implement basic URL validation
-	// Check for http:// or https:// prefix
-	return false
+	return strings.HasPrefix(value, "http://") || strings.HasPrefix(value, "https://")
 }
 
-// StructToMap converts a struct to map[string]interface{}
 func StructToMap(data interface{}) map[string]interface{} {
-	// TODO: Convert struct to map using reflection
-	// - Get reflect.Value and handle pointers
-	// - Create result map
-	// - Iterate through fields
-	// - Handle nested structs recursively
-	// - Skip unexported fields
-	return nil
+	// TODO: Create empty result map
+	// TODO: Get reflect.Value, handle pointers
+	// TODO: Return empty map if not a struct
+	// TODO: Iterate through fields
+	// TODO: Skip unexported fields
+	// TODO: Recursively handle nested structs
+	// TODO: Add field values to map using field name as key
+	panic("not implemented")
 }
 
-// MapToStruct converts a map to struct
 func MapToStruct(m map[string]interface{}, result interface{}) error {
-	// TODO: Convert map to struct using reflection
-	// - Verify result is a pointer to struct
-	// - Get struct value
-	// - Iterate through map entries
-	// - Find matching struct fields (case-insensitive)
-	// - Set field values with type conversion
-	return nil
+	// TODO: Get reflect.Value of result
+	// TODO: Check if result is a pointer, return error if not
+	// TODO: Get element value, check if struct
+	// TODO: Iterate through struct fields
+	// TODO: Skip fields that cannot be set (CanSet)
+	// TODO: Find matching key in map (case-insensitive)
+	// TODO: Convert map value to field type if possible
+	// TODO: Set field value using Set()
+	panic("not implemented")
 }
 
-// DeepEqual compares two values deeply using reflection
 func DeepEqual(a, b interface{}) bool {
-	// TODO: Implement deep equality check
-	// - Get reflect.Values for both inputs
-	// - Handle different kinds appropriately
-	// - For structs: compare all fields recursively
-	// - For slices/arrays: compare length and elements
-	// - For maps: compare keys and values
-	return false
+	// TODO: Use reflect.DeepEqual to compare a and b
+	panic("not implemented")
 }
 
-// PrintStructInfo prints detailed struct information
 func PrintStructInfo(data interface{}) {
-	// TODO: Print struct type information
-	// - Get reflect.Type
-	// - Print struct name
-	// - For each field:
-	//   - Print name, type, kind
-	//   - Print struct tags
-	//   - Print value
-	fmt.Println("Struct Information:")
-	// Implementation here
+	v := reflect.ValueOf(data)
+	t := reflect.TypeOf(data)
+
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+		t = t.Elem()
+	}
+
+	if v.Kind() != reflect.Struct {
+		fmt.Println("Not a struct")
+		return
+	}
+
+	fmt.Printf("Type: %s\n", t.Name())
+	fmt.Printf("Fields: %d\n\n", v.NumField())
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := t.Field(i)
+
+		fmt.Printf("Field %d:\n", i+1)
+		fmt.Printf("  Name: %s\n", fieldType.Name)
+		fmt.Printf("  Type: %s\n", fieldType.Type)
+		fmt.Printf("  Kind: %s\n", field.Kind())
+		fmt.Printf("  Value: %v\n", field.Interface())
+
+		if tag := fieldType.Tag.Get("validate"); tag != "" {
+			fmt.Printf("  Tag (validate): %s\n", tag)
+		}
+		fmt.Println()
+	}
 }
 
-// CopyStruct copies fields from src to dst
 func CopyStruct(dst, src interface{}) error {
-	// TODO: Copy matching fields between structs
-	// - Verify dst is pointer, src can be value or pointer
-	// - Get reflect.Values
-	// - Iterate through dst fields
-	// - Find matching src field by name
-	// - Copy value if types are compatible
-	return nil
+	// TODO: Get reflect.Value of dst, check if pointer
+	// TODO: Get element of dst
+	// TODO: Get reflect.Value of src, handle if pointer
+	// TODO: Verify both are structs
+	// TODO: Iterate through dst fields
+	// TODO: Skip fields that cannot be set
+	// TODO: Find matching field in src by name
+	// TODO: Set dst field if types match
+	panic("not implemented")
 }
 
 func main() {
-	// Example struct with validation tags
 	type User struct {
 		Name  string `validate:"required,min=3,max=50"`
 		Email string `validate:"required,email"`
@@ -147,7 +216,6 @@ func main() {
 		URL   string `validate:"url"`
 	}
 
-	// Test validation
 	fmt.Println("=== Validation Tests ===")
 	validUser := User{
 		Name:  "John Doe",
@@ -170,12 +238,10 @@ func main() {
 		fmt.Printf("  - %v\n", err)
 	}
 
-	// Test struct to map conversion
 	fmt.Println("\n=== Struct to Map ===")
 	userMap := StructToMap(&validUser)
 	fmt.Printf("User as map: %+v\n", userMap)
 
-	// Test map to struct conversion
 	fmt.Println("\n=== Map to Struct ===")
 	m := map[string]interface{}{
 		"Name":  "Jane Doe",
@@ -189,7 +255,6 @@ func main() {
 		fmt.Printf("User from map: %+v\n", newUser)
 	}
 
-	// Test deep equal
 	fmt.Println("\n=== Deep Equal ===")
 	user1 := User{Name: "Test", Email: "test@example.com", Age: 30}
 	user2 := User{Name: "Test", Email: "test@example.com", Age: 30}
@@ -197,7 +262,6 @@ func main() {
 	fmt.Printf("user1 == user2: %v\n", DeepEqual(user1, user2))
 	fmt.Printf("user1 == user3: %v\n", DeepEqual(user1, user3))
 
-	// Print struct info
 	fmt.Println("\n=== Struct Info ===")
 	PrintStructInfo(&validUser)
 }

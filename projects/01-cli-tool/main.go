@@ -37,16 +37,12 @@ func main() {
 	queryStr := args[0]
 	files := args[1:]
 
-	// TODO: Parse the query string into a Query object
-	// Hint: q, err := query.Parse(queryStr)
 	q, err := query.Parse(queryStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "query error: %v\n", err)
 		os.Exit(1)
 	}
 
-	// TODO: Process each input (files or stdin)
-	// Hint: Call processInput for each file, or stdin if no files
 	if len(files) == 0 {
 		if err := processInput(os.Stdin, q, "stdin"); err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
@@ -70,38 +66,33 @@ func main() {
 }
 
 func processInput(r io.Reader, q *query.Query, filename string) error {
-	// TODO: Decode JSON from reader
 	var data interface{}
 	if err := json.NewDecoder(r).Decode(&data); err != nil {
 		return fmt.Errorf("parsing JSON: %w", err)
 	}
 
-	// TODO: Execute query on data
 	result, err := q.Execute(data)
 	if err != nil {
 		return fmt.Errorf("executing query: %w", err)
 	}
 
-	// TODO: Format and output result
-	// Hint: Use formatter package based on flags
 	return outputResult(result)
 }
 
 func outputResult(data interface{}) error {
-	var fmt formatter.Formatter
+	var f formatter.Formatter
 
-	// TODO: Select formatter based on flags
 	if *table {
-		fmt = &formatter.TableFormatter{}
+		f = &formatter.TableFormatter{}
 	} else if *compact {
-		fmt = &formatter.JSONFormatter{Compact: true}
+		f = &formatter.JSONFormatter{Compact: true}
 	} else if *raw {
-		fmt = &formatter.RawFormatter{}
+		f = &formatter.RawFormatter{}
 	} else {
-		fmt = &formatter.JSONFormatter{Compact: false}
+		f = &formatter.JSONFormatter{Compact: false}
 	}
 
-	output, err := fmt.Format(data)
+	output, err := f.Format(data)
 	if err != nil {
 		return err
 	}

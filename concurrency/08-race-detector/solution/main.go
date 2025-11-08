@@ -4,8 +4,74 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-	"time"
 )
+
+// BuggyCounter has a race condition
+type BuggyCounter struct {
+	count int64
+}
+
+func (c *BuggyCounter) Increment() {
+	// Race condition: read-modify-write without synchronization
+	c.count++
+}
+
+func (c *BuggyCounter) Value() int64 {
+	return c.count
+}
+
+// BuggyMapWriter has concurrent map writes
+func BuggyMapWriter() map[string]int {
+	m := make(map[string]int)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(v int) {
+			defer wg.Done()
+			key := fmt.Sprintf("key%d", v)
+			// Race condition: concurrent map writes
+			m[key] = v
+		}(i)
+	}
+
+	wg.Wait()
+	return m
+}
+
+// BuggySliceAppend has concurrent slice appends
+func BuggySliceAppend() []int {
+	var s []int
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(v int) {
+			defer wg.Done()
+			// Race condition: concurrent slice append
+			s = append(s, v)
+		}(i)
+	}
+
+	wg.Wait()
+	return s
+}
+
+// BuggyLoopCapture has loop variable capture issue
+func BuggyLoopCapture() {
+	var wg sync.WaitGroup
+
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			// Race condition: captures loop variable i
+			fmt.Println(i)
+		}()
+	}
+
+	wg.Wait()
+}
 
 // FixedCounter uses atomic operations
 type FixedCounter struct {

@@ -25,7 +25,8 @@ type LRUCache struct {
 // NewLRUCache creates a new LRU cache
 // TODO: Initialize cache with capacity
 func NewLRUCache(capacity int) *LRUCache {
-	return nil
+	// TODO: Implement this function
+	panic("not implemented")
 }
 
 // Get retrieves value from cache
@@ -35,7 +36,7 @@ func (c *LRUCache) Get(key string) (interface{}, bool) {
 	// TODO: Check if exists
 	// TODO: Move to front (most recently used)
 	// TODO: Update stats
-	return nil, false
+	panic("not implemented")
 }
 
 // Set adds value to cache
@@ -45,6 +46,7 @@ func (c *LRUCache) Set(key string, value interface{}) {
 	// TODO: Check if exists, update if so
 	// TODO: Add new item
 	// TODO: Evict LRU if over capacity
+	panic("not implemented")
 }
 
 // Stats returns cache statistics

@@ -56,7 +56,7 @@ func TestFileError(t *testing.T) {
 }
 
 func TestErrorWrapping(t *testing.T) {
-	err := ReadFile("/missing/file.txt")
+	_, err := ReadFile("/missing/file.txt")
 	if err == nil {
 		t.Fatal("Expected error for missing file")
 	}
@@ -78,7 +78,7 @@ func TestErrorWrapping(t *testing.T) {
 }
 
 func TestPermissionError(t *testing.T) {
-	err := ReadFile("/forbidden/file.txt")
+	_, err := ReadFile("/forbidden/file.txt")
 	if err == nil {
 		t.Fatal("Expected error for forbidden file")
 	}

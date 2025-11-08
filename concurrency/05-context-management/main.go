@@ -7,27 +7,20 @@ import (
 )
 
 // CancellableWorker runs until context is cancelled
-// TODO: Implement context-aware worker
+// TODO: Implement worker that responds to context cancellation
 func CancellableWorker(ctx context.Context) error {
-	// TODO: Loop until context cancelled
-	// TODO: Return ctx.Err() on cancellation
-	return nil
+	panic("not implemented")
 }
 
 // WithTimeout executes operation with timeout
-// TODO: Implement timeout pattern
+// TODO: Implement timeout handling using context
 func WithTimeout(timeout time.Duration) (string, error) {
-	// TODO: Create context with timeout
-	// TODO: Simulate operation
-	// TODO: Check for timeout
-	return "", nil
+	panic("not implemented")
 }
 
-// TODO: Implement more context examples
 func main() {
 	fmt.Println("Context Management Examples")
 
-	// Cancellation example
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
 		time.Sleep(100 * time.Millisecond)

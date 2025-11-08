@@ -145,14 +145,15 @@ func SumArray(numbers []int) int {
 		return 0
 	}
 
-	// Convert Go slice to C array
-	// We can pass a pointer to the first element
-	// The Go slice's underlying array is compatible with C arrays
-	cArray := (*C.int)(unsafe.Pointer(&numbers[0]))
-	cLen := C.int(len(numbers))
+	// Convert Go int slice to C int array
+	// Go's int is 64-bit but C's int is 32-bit, so we need to convert
+	cArray := make([]C.int, len(numbers))
+	for i, v := range numbers {
+		cArray[i] = C.int(v)
+	}
 
-	// Call C function
-	result := C.sum_array(cArray, cLen)
+	// Call C function with converted array
+	result := C.sum_array(&cArray[0], C.int(len(cArray)))
 
 	return int(result)
 }

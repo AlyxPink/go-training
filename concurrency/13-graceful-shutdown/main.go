@@ -33,6 +33,7 @@ func NewServer(workers int) *Server {
 func (s *Server) Start() {
 	// TODO: Start worker goroutines
 	// TODO: Each worker respects context cancellation
+	panic("not implemented")
 }
 
 // Shutdown gracefully stops the server
@@ -41,7 +42,7 @@ func (s *Server) Shutdown(timeout time.Duration) error {
 	// TODO: Cancel context
 	// TODO: Wait for workers with timeout
 	// TODO: Return error if timeout exceeded
-	return nil
+	panic("not implemented")
 }
 
 // worker simulates server work

@@ -7,29 +7,42 @@ import (
 // Reverse returns the reversed version of the input string.
 // It properly handles Unicode characters by working with runes.
 func Reverse(s string) string {
-	// TODO: Implement string reversal
-	// Hint: Convert to []rune, reverse the slice, convert back to string
-	return ""
+	// TODO: Convert string to slice of runes
+	// TODO: Reverse the slice using two pointers (swap from both ends)
+	// TODO: Convert rune slice back to string and return
+	panic("not implemented")
 }
 
 // IsPalindrome checks if a string is a palindrome.
 // It ignores case and non-alphanumeric characters.
 func IsPalindrome(s string) bool {
-	// TODO: Implement palindrome check
-	// Hint: You can use Reverse() or compare characters from both ends
-	return false
+	// TODO: Create slice to hold normalized runes
+	// TODO: Convert to lowercase and filter only letters and digits
+	// TODO: Use two pointers to compare from both ends
+	// TODO: Return false if any mismatch, true if all match
+	panic("not implemented")
 }
 
 // CountChars returns a map with the count of each character in the string.
 func CountChars(s string) map[rune]int {
-	// TODO: Implement character counting
-	// Hint: Use a map[rune]int and range over the string
-	return nil
+	// TODO: Create map to store character counts
+	// TODO: Range over string (gives runes automatically)
+	// TODO: Increment count for each rune in the map
+	// TODO: Return the counts map
+	panic("not implemented")
 }
 
 func main() {
 	// Test your implementations here
 	fmt.Println("Reverse('hello'):", Reverse("hello"))
+	fmt.Println("Reverse('Hello, 世界'):", Reverse("Hello, 世界"))
+	fmt.Println()
+
 	fmt.Println("IsPalindrome('racecar'):", IsPalindrome("racecar"))
+	fmt.Println("IsPalindrome('hello'):", IsPalindrome("hello"))
+	fmt.Println("IsPalindrome('A man, a plan, a canal: Panama'):", IsPalindrome("A man, a plan, a canal: Panama"))
+	fmt.Println()
+
 	fmt.Println("CountChars('hello'):", CountChars("hello"))
+	fmt.Println("CountChars('Hello, 世界'):", CountChars("Hello, 世界"))
 }

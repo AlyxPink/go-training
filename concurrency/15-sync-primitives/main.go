@@ -19,7 +19,7 @@ type Database struct {
 // TODO: Use sync.Once for initialization
 func GetDatabase() *Database {
 	// TODO: Implement singleton pattern
-	return nil
+	panic("not implemented")
 }
 
 // BufferPool demonstrates sync.Pool
@@ -35,7 +35,7 @@ var bufferPool = sync.Pool{
 func GetBuffer() []byte {
 	// TODO: Get from pool
 	// TODO: Reset buffer
-	return nil
+	panic("not implemented")
 }
 
 // PutBuffer returns buffer to pool
@@ -65,6 +65,7 @@ func (q *Queue) Push(item int) {
 	// TODO: Add item
 	// TODO: Signal waiting goroutine
 	// TODO: Unlock
+	panic("not implemented")
 }
 
 // Pop waits for and removes item
@@ -74,7 +75,7 @@ func (q *Queue) Pop() int {
 	// TODO: Wait while empty
 	// TODO: Pop item
 	// TODO: Unlock
-	return 0
+	panic("not implemented")
 }
 
 func main() {

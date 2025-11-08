@@ -4,103 +4,101 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"time"
 )
 
-// Logger provides logging functionality
 type Logger struct {
 	prefix string
 }
 
 func NewLogger(prefix string) *Logger {
 	// TODO: Return new Logger with prefix
-	return nil
+	panic("not implemented")
 }
 
 func (l *Logger) Log(message string) {
-	// TODO: Print "[prefix] timestamp: message"
+	// TODO: Print formatted log message with prefix and timestamp
+	panic("not implemented")
 }
 
 func (l *Logger) Error(message string) {
-	// TODO: Print "[prefix] ERROR: message"
+	// TODO: Print error message with prefix
+	panic("not implemented")
 }
 
-// Service embeds Logger and adds service functionality
 type Service struct {
-	// TODO: Embed Logger
-	// TODO: Add name field
+	*Logger
+	name string
 }
 
 func NewService(name string) *Service {
-	// TODO: Create Service with embedded Logger
-	return nil
+	// TODO: Return new Service embedding Logger with "SERVICE" prefix
+	panic("not implemented")
 }
 
 func (s *Service) Start() {
-	// TODO: Log "Service <name> starting" using embedded Logger
+	// TODO: Log service starting message
+	panic("not implemented")
 }
 
 func (s *Service) Stop() {
-	// TODO: Log "Service <name> stopping"
+	// TODO: Log service stopping message
+	panic("not implemented")
 }
 
-// Person represents a person
 type Person struct {
 	FirstName string
 	LastName  string
 }
 
 func (p Person) FullName() string {
-	// TODO: Return "FirstName LastName"
-	return ""
+	// TODO: Return full name as "FirstName LastName"
+	panic("not implemented")
 }
 
-// Employee embeds Person and adds employee data
 type Employee struct {
-	// TODO: Embed Person
-	// TODO: Add EmployeeID and Department fields
+	Person
+	EmployeeID int
+	Department string
 }
 
 func NewEmployee(firstName, lastName string, id int, dept string) *Employee {
-	// TODO: Create Employee with embedded Person
-	return nil
+	// TODO: Return new Employee embedding Person with all fields
+	panic("not implemented")
 }
 
-// ReadWriteCloser combines multiple interfaces
 type ReadWriteCloser interface {
-	// TODO: Embed io.Reader, io.Writer, io.Closer
+	io.Reader
+	io.Writer
+	io.Closer
 }
 
-// BufferedReadWriteCloser implements ReadWriteCloser
 type BufferedReadWriteCloser struct {
-	// TODO: Embed types that provide needed interfaces
+	*strings.Reader
+	buffer strings.Builder
 }
 
 func NewBufferedReadWriteCloser(data string) *BufferedReadWriteCloser {
-	// TODO: Create with strings.Reader embedded
-	return nil
+	// TODO: Return BufferedReadWriteCloser with strings.Reader embedded
+	panic("not implemented")
+}
+
+func (b *BufferedReadWriteCloser) Write(p []byte) (n int, err error) {
+	// TODO: Write to internal buffer
+	panic("not implemented")
 }
 
 func (b *BufferedReadWriteCloser) Close() error {
-	// TODO: Implement Close
-	return nil
+	// TODO: Return nil (no-op close)
+	panic("not implemented")
 }
 
 func main() {
-	// Example usage - uncomment when implemented
-	/*
 	svc := NewService("API")
-	if svc != nil {
-		svc.Start()
-		svc.Log("Processing request")
-		svc.Stop()
-	}
+	svc.Start()
+	svc.Log("Processing request")
+	svc.Stop()
 
 	emp := NewEmployee("John", "Doe", 12345, "Engineering")
-	if emp != nil {
-		fmt.Println(emp.FullName())  // Promoted from Person
-		fmt.Println(emp.EmployeeID)
-	}
-	*/
-	fmt.Println("Implement the TODOs and uncomment main() to see it work!")
+	fmt.Println(emp.FullName())
+	fmt.Println(emp.EmployeeID)
 }

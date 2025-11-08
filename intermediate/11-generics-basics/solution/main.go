@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"cmp"
+	"fmt"
+)
 
 type Stack[T any] struct {
 	items []T
@@ -70,12 +73,12 @@ func Filter[T any](slice []T, pred func(T) bool) []T {
 	return result
 }
 
-func Max[T comparable](values ...T) T {
+func Max[T cmp.Ordered](values ...T) T {
 	if len(values) == 0 {
 		var zero T
 		return zero
 	}
-	
+
 	max := values[0]
 	for _, v := range values[1:] {
 		if v > max {

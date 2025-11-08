@@ -10,82 +10,145 @@ import (
 	"sync"
 )
 
-// User represents a user
 type User struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-// UserStore manages users
 type UserStore struct {
-	mu    sync.RWMutex
-	users map[int]User
+	mu     sync.RWMutex
+	users  map[int]User
 	nextID int
 }
 
-// NewUserStore creates a new user store
 func NewUserStore() *UserStore {
-	// TODO: Initialize store
-	return nil
+	return &UserStore{
+		users:  make(map[int]User),
+		nextID: 1,
+	}
 }
 
-// GetAll returns all users
 func (s *UserStore) GetAll() []User {
-	// TODO: Return all users (thread-safe)
-	return nil
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	
+	users := make([]User, 0, len(s.users))
+	for _, user := range s.users {
+		users = append(users, user)
+	}
+	return users
 }
 
-// Get returns user by ID
 func (s *UserStore) Get(id int) (User, bool) {
-	// TODO: Get user (thread-safe)
-	return User{}, false
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	
+	user, ok := s.users[id]
+	return user, ok
 }
 
-// Create adds a new user
 func (s *UserStore) Create(name string) User {
-	// TODO: Create user (thread-safe)
-	return User{}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	
+	user := User{
+		ID:   s.nextID,
+		Name: name,
+	}
+	s.users[s.nextID] = user
+	s.nextID++
+	return user
 }
 
-// Delete removes a user
 func (s *UserStore) Delete(id int) bool {
-	// TODO: Delete user (thread-safe)
-	return false
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	
+	if _, ok := s.users[id]; !ok {
+		return false
+	}
+	delete(s.users, id)
+	return true
 }
 
-// Server wraps HTTP server
 type Server struct {
 	store *UserStore
 }
 
-// NewServer creates a new server
 func NewServer() *Server {
-	// TODO: Initialize server
-	return nil
+	return &Server{
+		store: NewUserStore(),
+	}
 }
 
-// HandleUsers handles /users endpoint
 func (s *Server) HandleUsers(w http.ResponseWriter, r *http.Request) {
-	// TODO: Handle GET (list) and POST (create)
+	switch r.Method {
+	case http.MethodGet:
+		users := s.store.GetAll()
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(users)
+		
+	case http.MethodPost:
+		var req struct {
+			Name string `json:"name"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		
+		user := s.store.Create(req.Name)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(user)
+		
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
 
-// HandleUser handles /users/:id endpoint
 func (s *Server) HandleUser(w http.ResponseWriter, r *http.Request) {
-	// TODO: Handle GET (get by ID) and DELETE
+	// Extract ID from path /users/:id
+	idStr := strings.TrimPrefix(r.URL.Path, "/users/")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+	
+	switch r.Method {
+	case http.MethodGet:
+		user, ok := s.store.Get(id)
+		if !ok {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+		
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(user)
+		
+	case http.MethodDelete:
+		if !s.store.Delete(id) {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+		
+		w.WriteHeader(http.StatusNoContent)
+		
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
 
-// LoggingMiddleware logs requests
 func LoggingMiddleware(next http.Handler) http.Handler {
-	// TODO: Log method and path, then call next
-	return nil
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
 }
 
 func main() {
 	server := NewServer()
-	if server == nil {
-		fmt.Println("Implement NewServer first!")
-		return
-	}
 	
 	mux := http.NewServeMux()
 	mux.HandleFunc("/users", server.HandleUsers)

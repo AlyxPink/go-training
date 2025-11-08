@@ -9,7 +9,7 @@ func MapReduce(data []int, mapFunc func(int) int, reduceFunc func(int, int) int,
 	// TODO: Start worker pool
 	// TODO: Distribute data (map phase)
 	// TODO: Collect and reduce results
-	return 0
+	panic("not implemented")
 }
 
 // ParallelFilter filters data using multiple workers
@@ -18,7 +18,7 @@ func ParallelFilter(data []int, predicate func(int) bool, workers int) []int {
 	// TODO: Distribute work to workers
 	// TODO: Collect filtered results
 	// TODO: Maintain order if needed
-	return nil
+	panic("not implemented")
 }
 
 func main() {

@@ -10,8 +10,8 @@ import (
 
 // Sentinel errors for common conditions
 var (
-	ErrNotFound   = errors.New("file not found")
-	ErrPermission = errors.New("permission denied")
+	ErrNotFound      = errors.New("file not found")
+	ErrPermission    = errors.New("permission denied")
 	ErrInvalidFormat = errors.New("invalid file format")
 )
 
@@ -23,49 +23,47 @@ type ValidationError struct {
 }
 
 func NewValidationError(fields map[string]string) *ValidationError {
-	// TODO: Implement ValidationError constructor
-	// - Store fields map
-	// - Record timestamp
-	// - Return pointer to ValidationError
-	return nil
+	return &ValidationError{
+		Fields:    fields,
+		Timestamp: time.Now(),
+	}
 }
 
 func (e *ValidationError) Error() string {
-	// TODO: Implement Error() method
-	// - Format error message with field count
-	// - Include timestamp if needed
-	return ""
+	fieldList := make([]string, 0, len(e.Fields))
+	for field, msg := range e.Fields {
+		fieldList = append(fieldList, fmt.Sprintf("%s: %s", field, msg))
+	}
+	return fmt.Sprintf("validation failed (%d fields): %s", len(e.Fields), strings.Join(fieldList, ", "))
 }
 
 func (e *ValidationError) Unwrap() error {
-	// TODO: Implement Unwrap() for error chain
-	return nil
+	return e.err
 }
 
 // FileError represents file operation errors with context
 type FileError struct {
-	Op        string    // operation (read, write, open)
-	Path      string    // file path
-	Err       error     // underlying error
+	Op        string
+	Path      string
+	Err       error
 	Timestamp time.Time
 }
 
 func NewFileError(op, path string, err error) *FileError {
-	// TODO: Implement FileError constructor
-	// - Store operation, path, and wrapped error
-	// - Record timestamp
-	return nil
+	return &FileError{
+		Op:        op,
+		Path:      path,
+		Err:       err,
+		Timestamp: time.Now(),
+	}
 }
 
 func (e *FileError) Error() string {
-	// TODO: Format error with operation and path
-	// Example: "read /path/to/file: permission denied"
-	return ""
+	return fmt.Sprintf("%s %s: %v", e.Op, e.Path, e.Err)
 }
 
 func (e *FileError) Unwrap() error {
-	// TODO: Return wrapped error
-	return nil
+	return e.Err
 }
 
 // ErrorWithStack captures call stack for debugging
@@ -76,59 +74,73 @@ type ErrorWithStack struct {
 }
 
 func NewErrorWithStack(msg string, err error) *ErrorWithStack {
-	// TODO: Implement stack trace capture
-	// - Use runtime.Callers() to capture stack
-	// - Store message and wrapped error
-	// - Skip appropriate number of frames
-	return nil
+	// Capture stack trace (skip 2 frames: Callers and NewErrorWithStack)
+	pc := make([]uintptr, 32)
+	n := runtime.Callers(2, pc)
+	return &ErrorWithStack{
+		msg:   msg,
+		stack: pc[:n],
+		err:   err,
+	}
 }
 
 func (e *ErrorWithStack) Error() string {
-	// TODO: Return error message
-	return ""
+	if e.err != nil {
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
 }
 
 func (e *ErrorWithStack) Unwrap() error {
-	// TODO: Return wrapped error
-	return nil
+	return e.err
 }
 
 func (e *ErrorWithStack) StackTrace() string {
-	// TODO: Format stack trace for display
-	// - Use runtime.CallersFrames() to get frame information
-	// - Format each frame as "function (file:line)"
-	// - Return multi-line string
-	return ""
+	if len(e.stack) == 0 {
+		return ""
+	}
+
+	var sb strings.Builder
+	frames := runtime.CallersFrames(e.stack)
+
+	for {
+		frame, more := frames.Next()
+		fmt.Fprintf(&sb, "%s\n\t%s:%d\n", frame.Function, frame.File, frame.Line)
+		if !more {
+			break
+		}
+	}
+
+	return sb.String()
 }
 
 // ValidateFile validates file content
 func ValidateFile(content string) error {
-	// TODO: Implement file validation
-	// - Check if content is empty -> return ValidationError
-	// - Check if content has valid format (e.g., starts with specific prefix)
-	// - Return ValidationError with field-level details if invalid
-	return nil
+	// TODO: Create a map to store validation errors
+	// TODO: Check if content is empty, add error to map
+	// TODO: Check if content starts with "valid", add error to map
+	// TODO: If there are errors, return NewValidationError
+	// TODO: Return nil if validation passes
+	panic("not implemented")
 }
 
 // ReadFile simulates file reading with various error conditions
 func ReadFile(path string) (string, error) {
-	// TODO: Implement file reading simulation
-	// - Return ErrNotFound for paths containing "missing"
-	// - Return ErrPermission for paths containing "forbidden"
-	// - Return ErrInvalidFormat for paths containing "corrupt"
-	// - Wrap errors with FileError for context
-	// - Return content for valid paths
-	return "", nil
+	// TODO: Check path for "missing", "forbidden", or "corrupt"
+	// TODO: Return appropriate sentinel error wrapped in FileError
+	// TODO: For valid paths, return "valid file content", nil
+	// TODO: Use NewFileError to wrap errors with context
+	panic("not implemented")
 }
 
 // ProcessFile demonstrates error handling and propagation
 func ProcessFile(path string) error {
-	// TODO: Implement file processing with error handling
-	// - Call ReadFile() and handle errors
-	// - Validate content using ValidateFile()
-	// - Wrap errors with additional context
-	// - Use fmt.Errorf with %w for error wrapping
-	return nil
+	// TODO: Call ReadFile and check for errors
+	// TODO: Wrap any ReadFile error with fmt.Errorf using %w
+	// TODO: Call ValidateFile on the content
+	// TODO: Wrap any ValidateFile error with fmt.Errorf using %w
+	// TODO: Return nil on success
+	panic("not implemented")
 }
 
 func main() {
@@ -168,4 +180,9 @@ func main() {
 		}
 		fmt.Println()
 	}
+
+	// Demonstrate stack trace
+	fmt.Println("Stack trace example:")
+	stackErr := NewErrorWithStack("critical operation failed", errors.New("database connection lost"))
+	fmt.Printf("Error: %v\n\nStack Trace:\n%s\n", stackErr, stackErr.StackTrace())
 }

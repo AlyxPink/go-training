@@ -1,7 +1,5 @@
 package calculator
 
-import "packages/calculator/internal/ops"
-
 // Add returns sum of a and b
 func Add(a, b int) int {
 	// TODO: Use ops package

@@ -1,36 +1,27 @@
 package main
 
-import (
-	"strings"
-)
-
 // Add returns sum of two integers
+// TODO: Implement addition
 func Add(a, b int) int {
-	return a + b
+	panic("not implemented")
 }
 
 // Multiply returns product of two integers
+// TODO: Implement multiplication
 func Multiply(a, b int) int {
-	return a * b
+	panic("not implemented")
 }
 
 // IsPalindrome checks if string is palindrome
+// TODO: Implement palindrome check
 func IsPalindrome(s string) bool {
-	s = strings.ToLower(s)
-	for i := 0; i < len(s)/2; i++ {
-		if s[i] != s[len(s)-1-i] {
-			return false
-		}
-	}
-	return true
+	panic("not implemented")
 }
 
 // Fibonacci returns nth fibonacci number
+// TODO: Implement fibonacci calculation
 func Fibonacci(n int) int {
-	if n <= 1 {
-		return n
-	}
-	return Fibonacci(n-1) + Fibonacci(n-2)
+	panic("not implemented")
 }
 
 func main() {}
