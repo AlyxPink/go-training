@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"slices"
+	"strings"
+	"unicode"
 )
 
 // Reverse returns the reversed version of the input string.
@@ -10,17 +13,25 @@ func Reverse(s string) string {
 	// TODO: Convert string to slice of runes
 	// TODO: Reverse the slice using two pointers (swap from both ends)
 	// TODO: Convert rune slice back to string and return
-	panic("not implemented")
+	runes := []rune(s)
+	slices.Reverse(runes)
+	return string(runes)
 }
 
 // IsPalindrome checks if a string is a palindrome.
 // It ignores case and non-alphanumeric characters.
 func IsPalindrome(s string) bool {
 	// TODO: Create slice to hold normalized runes
-	// TODO: Convert to lowercase and filter only letters and digits
+	// TODO: Convert to lowercase and filter oly letters and digits
 	// TODO: Use two pointers to compare from both ends
 	// TODO: Return false if any mismatch, true if all match
-	panic("not implemented")
+	var result string
+	for _, r := range strings.ToLower(s) {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			result += string(r)
+		}
+	}
+	return result == Reverse(result)
 }
 
 // CountChars returns a map with the count of each character in the string.
@@ -29,7 +40,11 @@ func CountChars(s string) map[rune]int {
 	// TODO: Range over string (gives runes automatically)
 	// TODO: Increment count for each rune in the map
 	// TODO: Return the counts map
-	panic("not implemented")
+	count := map[rune]int{}
+	for _, r := range s {
+		count[r]++
+	}
+	return count
 }
 
 func main() {
