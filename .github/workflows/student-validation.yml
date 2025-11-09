@@ -20,7 +20,7 @@ jobs:
         run: |
           # Enable validation on forks OR study/student/practice/learning/exercise branches
           if [ "${{ github.repository }}" != "AlyxPink/go-training" ] || \
-             [[ "${{ github.ref }}" =~ ^refs/heads/(study|student|practice|learning|exercise)/ ]]; then
+             [[ "${{ github.ref }}" =~ ^refs/heads/(study|student|practice|learning|exercise) ]]; then
             echo "is_fork=true" >> $GITHUB_OUTPUT
             echo "✅ Running validation: ${{ github.repository }} on ${{ github.ref }}"
           else
